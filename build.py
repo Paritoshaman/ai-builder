@@ -18,7 +18,7 @@ SYSTEM = """You build websites. Reply with ONLY JSON:
 No markdown, no explanation."""
 
 resp = client.chat.completions.create(
-    model="llama-3.3-70b-versatile",
+    model="openai/gpt-oss-120b",
     messages=[{"role": "system", "content": SYSTEM},
               {"role": "user", "content": prompt}],
 )
