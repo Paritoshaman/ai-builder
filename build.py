@@ -1,12 +1,11 @@
 import os
 import json
-import time
 from openai import OpenAI
 from github import Github
 
 client = OpenAI(
-    base_url="https://models.github.ai/inference",
-    api_key=os.environ["MODELS_TOKEN"],
+    base_url="https://api.groq.com/openai/v1",
+    api_key=os.environ["GROQ_KEY"],
 )
 gh = Github(os.environ["GH_TOKEN"])
 user = gh.get_user()
@@ -18,21 +17,11 @@ SYSTEM = """You build websites. Reply with ONLY JSON:
 {"files": {"index.html": "<html>", "style.css": "<css>"}}
 No markdown, no explanation."""
 
-resp = None
-for attempt in range(3):
-    try:
-        print(f"Attempt {attempt + 1}...")
-        resp = client.chat.completions.create(
-            model="openai/gpt-4o-mini",
-            messages=[{"role": "system", "content": SYSTEM},
-                      {"role": "user", "content": prompt}],
-        )
-        break
-    except Exception as e:
-        print(f"Error on attempt {attempt + 1}: {e}")
-        if attempt == 2:
-            raise
-        time.sleep(10)
+resp = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[{"role": "system", "content": SYSTEM},
+              {"role": "user", "content": prompt}],
+)
 
 text = resp.choices[0].message.content.strip()
 if text.startswith("```"):
