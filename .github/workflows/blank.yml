@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      models: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,6 +22,7 @@ jobs:
       - name: Build
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          MODELS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USER_PROMPT: ${{ inputs.prompt }}
           USER_REPO: ${{ inputs.repo_name }}
         run: python build.py
