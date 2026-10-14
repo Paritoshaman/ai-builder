@@ -4,10 +4,9 @@ import time
 from openai import OpenAI
 from github import Github
 
-# Connect to GitHub and the AI
 client = OpenAI(
-    base_url="https://models.inference.ai.azure.com",
-    api_key=os.environ["GH_TOKEN"],
+    base_url="https://models.github.ai/inference",
+    api_key=os.environ["MODELS_TOKEN"],
 )
 gh = Github(os.environ["GH_TOKEN"])
 user = gh.get_user()
@@ -24,7 +23,7 @@ for attempt in range(3):
     try:
         print(f"Attempt {attempt + 1}...")
         resp = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="openai/gpt-4o-mini",
             messages=[{"role": "system", "content": SYSTEM},
                       {"role": "user", "content": prompt}],
         )
@@ -39,7 +38,7 @@ text = resp.choices[0].message.content.strip()
 if text.startswith("```"):
     text = text.split("```")[1]
     if text.startswith("json"): text = text[4:]
-    
+
 files = json.loads(text.strip())["files"]
 
 try:
